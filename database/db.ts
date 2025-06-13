@@ -1,5 +1,5 @@
-const sqlite3 = require('sqlite3')
-const path = require('pasth');
+import path from 'path';
+import sqlite3 from 'sqlite3';
 
 const db = new sqlite3.Database(path.resolve(__dirname, 'userdb.db'), (err) => {
     if (err) {
@@ -11,7 +11,7 @@ const db = new sqlite3.Database(path.resolve(__dirname, 'userdb.db'), (err) => {
 db.run(`CREATE TABLE IF NOT EXISTS mood_entries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     mood INTEGER NOT NULL,
-    note TEXT,
-    timestamp DATETIME DEFAULT CURERNT_TIMESTAMP)`);
+    log TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)`);
 
-module.export = db;
+export default db;
