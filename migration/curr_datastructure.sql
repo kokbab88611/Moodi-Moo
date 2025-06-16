@@ -1,0 +1,19 @@
+-- 001_create_users.sql
+CREATE TABLE users (
+  user_id SERIAL PRIMARY KEY,
+  username VARCHAR(20) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 002_create_mood_log.sql
+CREATE TABLE mood_log (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  log_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  mood VARCHAR(50),
+  mood_rate INT CHECK(mood_rate BETWEEN 0 AND 10),
+  note TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
