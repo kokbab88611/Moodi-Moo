@@ -9,7 +9,7 @@ CREATE TABLE users (
 
 -- 002_create_mood_log.sql
 CREATE TABLE mood_log (
-  id SERIAL PRIMARY KEY,
+  log_id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL,
   log_date DATE NOT NULL DEFAULT CURRENT_DATE,
   mood VARCHAR(50),
