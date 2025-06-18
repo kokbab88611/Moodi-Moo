@@ -6,7 +6,7 @@ const port = 3000;
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('MOOOOOoo');
 });
 
 app.post('/update', async (req, res) =>{
@@ -85,6 +85,10 @@ app.put('/mood/:log_id', async (req, res) => {
     return res.status(500).json({error: 'Internal server error'});
   }
 }) ;
+
+app.get('/getmood/:date', async(req, res) => {
+  
+})
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
