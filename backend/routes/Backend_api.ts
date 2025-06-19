@@ -87,6 +87,7 @@ app.put('/mood/:log_id', async (req, res) => {
 }) ;
 
 app.get('/getmood/:date', async(req, res) => {
+  const date = new Date()
   
 })
 
