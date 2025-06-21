@@ -1,4 +1,3 @@
--- 001_create_users.sql
 CREATE TABLE users (
   user_id SERIAL PRIMARY KEY,
   username VARCHAR(20) NOT NULL UNIQUE,
@@ -7,7 +6,6 @@ CREATE TABLE users (
   joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 002_create_mood_log.sql
 CREATE TABLE mood_log (
   log_id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL,

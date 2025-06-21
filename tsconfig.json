@@ -3,7 +3,7 @@
     "target": "ES2020",
     "module": "commonjs",
     "rootDir": ".",
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["*"]
     },
@@ -13,6 +13,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./src/", "./db/"],
+  "include": ["./database/", "./backend/"],
   "exclude": ["node_modules"]
 }

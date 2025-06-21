@@ -20,7 +20,9 @@
     "jwt-decode": "^4.0.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "passport-jwt": "^4.0.1",
     "pg": "^8.16.0",
+    "pg-pool": "^3.10.1",
     "sqlite3": "^5.1.7",
     "styled-components": "^6.1.19",
     "webpack": "^5.99.9"
@@ -33,6 +35,8 @@
     "@types/node": "^24.0.1",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/pg": "^8.15.4",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",

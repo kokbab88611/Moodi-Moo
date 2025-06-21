@@ -1,13 +1,13 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import pool from './database/db';
+import pool from '../../database/db';
 import passport from 'passport'
 import { Request, Response } from 'express';
 
 const router = express.Router();
 
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', async (req: Request, res: Response): Promise<any> => {
     const {email, password, username} = req.body;
     if (!email || !password || !username){
         return res.status(400).json({error: 'Missing fields'});
@@ -32,7 +32,7 @@ router.post('/register', async (req: Request, res: Response) => {
     }
 });
 
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response): Promise<any> => {
 
 });
 

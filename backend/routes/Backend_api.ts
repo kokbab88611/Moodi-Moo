@@ -1,5 +1,6 @@
 import express from 'express';
-import pool from '/workspaces/Moodi-Moo/database/db.ts';
+import pool from '../../database/db';
+import { promises } from 'dns';
 const app = express();
 const port = 3000;
 
@@ -9,7 +10,7 @@ app.get('/', (req, res) => {
   res.send('MOOOOOoo');
 });
 
-app.post('/update', async (req, res) =>{
+app.post('/update', async (req, res): Promise<any> =>{
 const {mood, mood_rate, note} = req.body;
   if(!mood) {
     return res.status(400).json({error: 'Mood is required'});
@@ -21,11 +22,11 @@ const {mood, mood_rate, note} = req.body;
     );
   } catch (error) {
     console.error('DB insert has failed: ', error);
-    return res.state(500).json({error: 'DB insert has failed'});
+    return res.status(500).json({error: 'DB insert has failed'});
   }
 })
 
-app.get('/mood', async (req, res) => {
+app.get('/mood', async (req, res): Promise<any> => {
   const userId = req.query.user_id;
   if(!userId) {
     return res.status(400).json({error: 'Missing user_id'});
@@ -42,7 +43,7 @@ app.get('/mood', async (req, res) => {
   }
 });
 
-app.put('/mood/:log_id', async (req, res) => {
+app.put('/mood/:log_id', async (req, res): Promise<any> => {
   const log_id = req.params.log_id;
   const {mood, mood_rate, note, user_id } = req.body;
   
