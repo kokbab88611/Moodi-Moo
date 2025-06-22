@@ -1,11 +1,36 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import {findUserByEmail} from '../../database/db';
 import pool from '../../database/db';
-import passport from 'passport'
+import passport from 'passport';
+import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
 import { Request, Response } from 'express';
-
+import dotenv from 'dotenv';
+dotenv.config();
 const router = express.Router();
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.CLIENTID as string,
+    clientSecret: process.env.CLIENTSECRET as string,
+    callbackURL: 'https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev/auth/google/callback',
+},
+async function(accessToken: any, refreshToken: any, profile: any, cb: any) {
+    console.log(profile);
+    try {
+        const email = profile.emails?.[0]?.value;
+        if(!email) return cb(new Error('no email provided'), false);
+        const findUser = await findUserByEmail(email);
+        if(findUser){
+            return cb(null, findUser)
+        } else {
+            return cb(null, false)
+        }
+    } catch(err){
+        return cb(err, false)
+    }
+}
+))
 
 router.post('/register', async (req: Request, res: Response): Promise<any> => {
     const {email, password, username} = req.body;

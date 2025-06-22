@@ -1,11 +1,17 @@
-CREATE TABLE users (
-  user_id SERIAL PRIMARY KEY,
-  username VARCHAR(20) NOT NULL UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,
-  email VARCHAR(100) NOT NULL UNIQUE,
-  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
+                                            Table "public.users"
+    Column     |            Type             | Collation | Nullable |                Default                 
+---------------+-----------------------------+-----------+----------+----------------------------------------
+ user_id       | integer                     |           | not null | nextval('users_user_id_seq'::regclass)
+ username      | character varying(20)       |           | not null | 
+ password_hash | character varying(255)      |           |          | 
+ email         | character varying(100)      |           |          | 
+ joined_at     | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+ auth_provider | character varying(20)       |           |          | 'local'::character varying
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (user_id)
+    "users_email_key" UNIQUE CONSTRAINT, btree (email)
+    "users_username_key" UNIQUE CONSTRAINT, btree (username)
+    
 CREATE TABLE mood_log (
   log_id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL,
@@ -15,3 +21,7 @@ CREATE TABLE mood_log (
   note TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+//docker exec -it database-db-1 psql -U user -d moodidb
+
+
