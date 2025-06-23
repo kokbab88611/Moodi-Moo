@@ -1,7 +1,7 @@
 import express from 'express';
 
 import passport from 'passport';
-import authRoutes from './routes/auth';
+import authRoutes from './authenticate/auth';
 
 const app = express();
 
