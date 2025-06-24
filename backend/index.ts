@@ -1,13 +1,20 @@
 import express from 'express';
-
+import cors from 'cors';
 import passport from 'passport';
 import authRoutes from './authenticate/auth';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
+app.use(cors({
+  origin: 'https://ominous-goggles-g5wrvrxwxx63vxgr-6000.app.github.dev/', 
+  credentials: true
+}));
+
+
 app.use(express.json());
 app.use(passport.initialize());
-
+app.use(cookieParser());
 app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
