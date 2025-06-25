@@ -1,24 +1,24 @@
 import express from 'express';
 import pool from '../../database/db';
 import { promises } from 'dns';
-const app = express();
-const port = 3000;
 
-app.use(express.json());
+const router = express.Router();
 
-app.get('/', (req, res) => {
-  res.send('MOOOOOoo');
-});
+interface Mood{
+    mood: string;
+    moodRate: number;
+    note?: string;
+}
 
-app.post('/update', async (req, res): Promise<any> =>{
-const {mood, mood_rate, note} = req.body;
+router.post('/update', async (req, res): Promise<any> =>{
+    const {mood, moodRate, note=""}: Mood = req.body;
   if(!mood) {
     return res.status(400).json({error: 'Mood is required'});
   }
 
   try{
     const result = await pool.query('INSERT INTO mood_log (mood, mood_rate, note) VALUES ($1, $2, $3) RETURNING id',
-      [mood, mood_rate, note]
+      [mood, moodRate, note]
     );
   } catch (error) {
     console.error('DB insert has failed: ', error);
@@ -26,7 +26,7 @@ const {mood, mood_rate, note} = req.body;
   }
 })
 
-app.get('/mood', async (req, res): Promise<any> => {
+router.get('/mood', async (req, res): Promise<any> => {
   const userId = req.query.user_id;
   if(!userId) {
     return res.status(400).json({error: 'Missing user_id'});
@@ -43,7 +43,7 @@ app.get('/mood', async (req, res): Promise<any> => {
   }
 });
 
-app.put('/mood/:log_id', async (req, res): Promise<any> => {
+router.put('/mood/:log_id', async (req, res): Promise<any> => {
   const log_id = req.params.log_id;
   const {mood, mood_rate, note, user_id } = req.body;
   
@@ -87,13 +87,10 @@ app.put('/mood/:log_id', async (req, res): Promise<any> => {
   }
 }) ;
 
-app.get('/getmood/:date', async(req, res) => {
+router.get('/getmood/:date', async(req, res) => {
   const date = new Date()
   
 })
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
-
+export default router;
 

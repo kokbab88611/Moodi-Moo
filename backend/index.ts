@@ -3,6 +3,7 @@ import cors from 'cors';
 import passport from 'passport';
 import authRoutes from './authenticate/auth';
 import cookieParser from 'cookie-parser';
+import moodRoutes from './routes/mood';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(passport.initialize());
 app.use(cookieParser());
 app.use('/auth', authRoutes);
+app.use('/mood', moodRoutes);
 
 app.get('/', (req, res) => {
   res.send('Server is running. Go to /auth/google to login.');

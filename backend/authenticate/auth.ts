@@ -8,9 +8,6 @@ import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
 import { Request, Response } from 'express';
 import dotenv from 'dotenv';
 
-import { profile } from 'console';
-import { resolvePtr } from 'dns';
-import { nextTick } from 'process';
 dotenv.config();
 const router = express.Router();
 
@@ -71,13 +68,17 @@ router.post('/logout', (req: Request, res: Response) => {
             return(err);
         }
     });
+    console.log('Logged Out')
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.redirect('/')
 });
 
 router.get('/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] }));
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account',
+    }));
 
 router.get('/google/callback', (req, res, next) => {
   passport.authenticate('google', (err:any, user:any, info:any) => {
@@ -119,15 +120,15 @@ router.get('/google/callback', (req, res, next) => {
 
 
 router.post('/refresh', async (req: Request, res: Response): Promise<any> => {
-    const token = req.cookies.refreshTokens;
+    const token = req.cookies.refreshToken;
     if(!token){
         return res.sendStatus(401);
     }
     try{
         const decoded = verifyToken(token) as { user_id: string, email: string };
-        const newAccessTokens = generateAccessToken(decoded.user_id, decoded.email);
+        const newAccessToken = generateAccessToken(decoded.user_id, decoded.email);
 
-        res.cookie('accessToken', newAccessTokens, {
+        res.cookie('accessToken', newAccessToken, {
             httpOnly: true,
             secure: true,
             sameSite: 'strict',
