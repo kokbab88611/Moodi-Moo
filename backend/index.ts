@@ -7,10 +7,7 @@ import moodRoutes from './routes/mood';
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://ominous-goggles-g5wrvrxwxx63vxgr-6000.app.github.dev/', 
-  credentials: true
-}));
+app.use(cors());
 
 
 app.use(express.json());
