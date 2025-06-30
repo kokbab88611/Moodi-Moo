@@ -1,11 +1,10 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import {findOrCreateUserGoogle} from '../../database/db';
 import {generateAccessToken, generateRefreshToken, verifyToken} from './jwt';
 import pool from '../../database/db';
 import passport from 'passport';
 import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
-import { Request, Response } from 'express';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -57,6 +56,19 @@ router.post('/register', async (req: Request, res: Response): Promise<any> => {
         return res.status(500).json({ error: 'Internal Server Error'});
     }
 });
+
+router.get('/check', (req: Request, res: Response): any => {
+    const token = req.cookies.accessToken;
+    if(!token){
+        return res.status(401).json({message: 'Unauthorised'})
+    }
+    try {
+        const decoded = verifyToken(token);
+        res.json({user: decoded});
+    } catch (err) {
+        res.status(403).json({message: 'Invalid Token'})
+    }
+})
 
 router.post('/login', async (req: Request, res: Response): Promise<any> => {
 
