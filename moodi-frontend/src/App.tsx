@@ -1,11 +1,14 @@
-import Frontpage from './Frontpage';
-import Landingpage from './Landingpage';
-
+import Loginpage from './Loginpage.tsx'
+import Landingpage from './Landingpage.tsx'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 function App() {
   return (
-    <div>
-      < Landingpage/>
-    </div>
+    <BrowserRouter> 
+      <Routes>
+        <Route path="/" element={<Landingpage/>}/>
+        <Route path="/login" element={<Loginpage/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

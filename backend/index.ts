@@ -7,8 +7,10 @@ import moodRoutes from './routes/mood';
 
 const app = express();
 
-app.use(cors());
-
+app.use(cors({
+  origin: 'https://ominous-goggles-g5wrvrxwxx63vxgr-5173.app.github.dev',  // your frontend origin
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(passport.initialize());

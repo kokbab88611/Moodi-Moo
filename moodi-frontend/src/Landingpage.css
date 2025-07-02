@@ -47,11 +47,11 @@ nav {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    max-width: 1200px;
+    max-width: none;
     margin: 0 auto;
 }
 
-.logo {
+.logo a {
     font-size: 1.8rem;
     font-weight: 800;
     background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
@@ -62,7 +62,7 @@ nav {
 
 .nav-links {
     display: flex;
-    gap: 2rem;
+    gap: 4rem;
     list-style: none;
 }
 
@@ -71,7 +71,7 @@ nav {
     text-decoration: none;
     transition: color 0.3s ease;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
 }
 
 .nav-links a:hover {
@@ -84,7 +84,7 @@ nav {
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
     padding: 2rem;
-    max-width: 1200px;
+    max-width: none;
     margin: 0 auto;
     align-items: center;
     position: relative;
@@ -126,16 +126,15 @@ nav {
     text-decoration: none;
     border-radius: 50px;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.5rem;
     transition: all 0.3s ease;
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
     width: fit-content;
-    animation: fadeInUp 1s ease-out 0.4s both;
 }
 
 .cta-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    transform: scale(1.05);
+    color: white;
 }
 
 .demo-section {
@@ -233,13 +232,13 @@ nav {
 /* Features */
 .features {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4rem;
 }
 
 .feature {
+    padding-top: 2rem;
     text-align: center;
-    padding: 1rem;
 }
 
 .feature-icon {
