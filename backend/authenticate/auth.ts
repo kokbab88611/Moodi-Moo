@@ -95,11 +95,11 @@ router.get('/google',
 router.get('/google/callback', (req, res, next) => {
   passport.authenticate('google', (err:any, user:any, info:any) => {
     if (err) {
-      console.error("❌ Error from Google Strategy:", err);
+      console.error(" Error from Google Strategy:", err);
       return res.redirect('/login');
     }
     if (!user) {
-      console.warn("⚠️ No user returned from Google. Info:", info);
+      console.warn("No user returned from Google. Info:", info);
       return res.redirect('/login');
     }
     // You can generate JWT here and respond accordingly
@@ -120,7 +120,23 @@ router.get('/google/callback', (req, res, next) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
-    res.redirect('/');
+    const frontendOrigin = 'https://ominous-goggles-g5wrvrxwxx63vxgr-5173.app.github.dev/';
+    res.send(`
+    <html>
+        <head><title>Logging in...</title></head>
+        <body>
+        <script>
+            window.opener.postMessage({
+            accessToken: "${accessToken}",
+            refreshToken: "${refreshToken}"
+            }, "${frontendOrigin}");
+            window.close();
+        </script>
+        <p>Logging in...</p>
+        </body>
+    </html>
+    `);
+
   })(req, res, next);
 });
   

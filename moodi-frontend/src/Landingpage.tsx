@@ -23,7 +23,7 @@ function Landingpage() {
                     <h1>Understand Truly.</h1>
                     <h1>Live Fully.</h1>
                     <p>Discover patterns in your emotion with our mood diary. Track your feeling, hashtag them and write Logs.</p>
-                    <a href='' className='cta-button'>Start Your Journey</a>
+                    <a href='/login' className='cta-button'>Start Your Journey</a>
                     <div className='features'>
                         <div className='feature'>
                             <span className='feature-icon'>🤩</span>

@@ -1,9 +1,36 @@
-import React from "react";
 import './Loginpage.css';
+import React, { useEffect } from 'react';
 
 function Loginpage() {
-    const handleLoginButton = async () => {
-        return window.location.href = 'https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev/auth/google';
+
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin !== "https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev/") {
+            return;
+            }  
+            if (event.data.success) {
+                fetch('/api/me', {credentials: 'include'})
+                .then(res => res.json())
+                .then(user => {
+                    return user;
+                })
+            }
+        }
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
+}, []);
+
+
+
+
+    const handlegoogleButton = () => {
+        const width = 600;
+        const height = 800;
+        const left = window.screenX + (window.innerWidth - width) / 2;
+        const top = window.screenY + (window.innerHeight - height) / 2;
+
+        const windowFeatures =`width=${width},height=${height},left=${left},top=${top}`;
+        window.open('https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev/auth/google', '_blank', windowFeatures);
     }
 
     return (
@@ -45,7 +72,7 @@ function Loginpage() {
                     <div className="divider">
                         <span>or continue with</span>
                     </div>
-                    <button type="button" className="google-button" onClick={handleLoginButton}>
+                    <button type="button" className="google-button" onClick={handlegoogleButton}>
                         <div className="gsi-material-button-icon">
                             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xmlnsXlink="http://www.w3.org/1999/xlink" style = {{display: "block"}}>
                                 <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>

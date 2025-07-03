@@ -3,7 +3,7 @@ import cors from 'cors';
 import passport from 'passport';
 import authRoutes from './authenticate/auth';
 import cookieParser from 'cookie-parser';
-import moodRoutes from './routes/mood';
+import moodRoutes from './apis/mood';
 
 const app = express();
 

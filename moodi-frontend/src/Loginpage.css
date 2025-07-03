@@ -32,7 +32,7 @@ body::before {
 
 .login-container {
     width: 100%;
-    max-width: 420px;
+    max-width: 500px;
     padding: 2rem;
     position: relative;
     z-index: 1;
@@ -50,11 +50,14 @@ body::before {
 
 .logo {
     text-align: center;
+    align-items: center;
     margin-bottom: 2rem;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .logo h1 {
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: 800;
     background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
     -webkit-background-clip: text;
@@ -272,7 +275,6 @@ body::before {
     width: 30px;
     background-size: contain;
 }
-
 
 @keyframes fadeInUp {
     from {
