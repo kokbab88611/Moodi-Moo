@@ -3,7 +3,7 @@ import './Landingpage.css';
 function Landingpage() {
 
     return(
-        <div className='main-container'>
+        <div className='landing-main-container'>
             <header>
                 <nav>
                     <div className='logo'><a href='/'>Moodi-Moo</a></div>

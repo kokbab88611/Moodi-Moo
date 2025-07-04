@@ -1,3 +1,16 @@
+                                        Table "public.mood_log"
+   Column   |            Type             | Collation | Nullable |               Default                
+------------+-----------------------------+-----------+----------+--------------------------------------
+ log_id     | integer                     |           | not null | nextval('mood_log_id_seq'::regclass)
+ user_id    | integer                     |           | not null | 
+ log_date   | date                        |           | not null | CURRENT_DATE
+ mood       | character varying(50)       |           |          | 
+ note       | text                        |           |          | 
+ created_at | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+ hashtags   | text[]                      |           | not null | '{}'::text[]
+Indexes:
+    "mood_log_pkey" PRIMARY KEY, btree (log_id)
+    
                                             Table "public.users"
     Column     |            Type             | Collation | Nullable |                Default                 
 ---------------+-----------------------------+-----------+----------+----------------------------------------
@@ -11,17 +24,8 @@ Indexes:
     "users_pkey" PRIMARY KEY, btree (user_id)
     "users_email_key" UNIQUE CONSTRAINT, btree (email)
     "users_username_key" UNIQUE CONSTRAINT, btree (username)
-    
-CREATE TABLE mood_log (
-  log_id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL,
-  log_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  mood VARCHAR(50),
-  mood_rate INT CHECK(mood_rate BETWEEN 0 AND 10),
-  note TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
+    
 //docker exec -it database-db-1 psql -U user -d moodidb
 
 

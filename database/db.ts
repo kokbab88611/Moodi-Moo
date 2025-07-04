@@ -37,7 +37,7 @@ export async function findOrCreateUserGoogle(profile: any) {
         RETURNING *`,
         [userData.username, userData.email, userData.auth_provider]
     );
-    return insertUser.rows[0];
+    return userData;
 }
 
 

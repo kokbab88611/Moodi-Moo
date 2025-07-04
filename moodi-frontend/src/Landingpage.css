@@ -13,14 +13,14 @@ body {
     line-height: 1.6;
 }
 
-.main-container {
+.landing-main-container {
     height: 100vh;
     display: grid;
     grid-template-rows: auto 1fr auto;
     position: relative;
 }
 
-.main-container::before {
+.landing-main-container::before {
     content: '';
     position: absolute;
     top: 0;

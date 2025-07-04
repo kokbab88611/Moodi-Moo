@@ -1,27 +1,40 @@
 import './Loginpage.css';
 import React, { useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Loginpage() {
+    const navigate = useNavigate();
+
+    const handleRedirect = () => {
+        
+        navigate('/me');
+    }
 
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
-            if (event.origin !== "https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev/") {
+            if (event.origin !== "https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev") {
             return;
             }  
             if (event.data.success) {
-                fetch('/api/me', {credentials: 'include'})
-                .then(res => res.json())
-                .then(user => {
-                    return user;
+                axios.get('/auth/me', {withCredentials: true})
+                .then(response => {
+                    const user = response.data;
+                    if(!user){
+                        console.log('errorrR')
+                        return;
+                    }
+                    handleRedirect();
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error)
                 })
             }
+
         }
         window.addEventListener("message", handleMessage);
         return () => window.removeEventListener("message", handleMessage);
 }, []);
-
-
-
 
     const handlegoogleButton = () => {
         const width = 600;

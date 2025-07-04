@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import {findOrCreateUserGoogle} from '../../database/db';
 import {generateAccessToken, generateRefreshToken, verifyToken} from './jwt';
@@ -6,6 +6,11 @@ import pool from '../../database/db';
 import passport from 'passport';
 import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
 import dotenv from 'dotenv';
+import { JwtPayload } from 'jsonwebtoken';
+
+export interface AuthenticatedRequest extends Request {
+    user?: JwtPayload
+}
 
 dotenv.config();
 const router = express.Router();
@@ -18,9 +23,9 @@ passport.use(new GoogleStrategy({
 async function(accessToken: any, refreshToken: any, profile: any, cb: any) {
     try {
         const email = profile.emails?.[0]?.value;
-        console.log(email)
         if(!email) return cb(new Error('no email provided'), false);
         const User = await findOrCreateUserGoogle(profile);
+        console.log(User)
         if(User){
             return cb(null, User)
         } else {
@@ -31,6 +36,47 @@ async function(accessToken: any, refreshToken: any, profile: any, cb: any) {
     }
 }
 ))
+
+router.get('/me', requireAuth ,async (req:AuthenticatedRequest, res) => {
+    try{
+        const user_id = req.user?.user_id;
+        const user_email = req.user?.email;
+        if(!user_email){
+            res.status(404).json({error: 'Token not valid (email not included)'})
+        }
+        
+        const result = await pool.query(
+        'SELECT user_id, username, email, joined_at, auth_provider FROM users WHERE email = $1',
+        [user_email]
+        );
+
+        if(result.rows.length === 0) {
+            res.status(404).json({error: 'User not found'})
+            return;
+        }
+        const user = result.rows[0];
+        res.json({user});
+    } catch(err) {
+        console.error('Error fetching user data', err);
+        res.status(500).json({error: 'Internal server error'})
+    }
+})
+
+export function requireAuth (req: Request, res: Response, next: NextFunction):void {
+    const token = req.cookies?.accessToken;
+    if(!token) {
+        res.status(401).json({error: 'Missing Access token'});
+        return ;
+        }
+    try{  
+        const decoded = verifyToken(token);
+        req.user = decoded;
+        next();
+    } catch(err){
+        res.status(403).json({error: 'Invalid token'});
+        return ;
+    }
+}
 
 router.post('/register', async (req: Request, res: Response): Promise<any> => {
     const {email, password, username} = req.body;
@@ -103,8 +149,9 @@ router.get('/google/callback', (req, res, next) => {
       return res.redirect('/login');
     }
     // You can generate JWT here and respond accordingly
-    const accessToken = generateAccessToken(user.id, user.emails?.[0]?.value, 'user');
-    const refreshToken = generateRefreshToken(user.id, user.emails?.[0]?.value);
+
+    const accessToken = generateAccessToken(user.username, user.email, 'user');
+    const refreshToken = generateRefreshToken(user.username, user.email);
 
     res.cookie('accessToken', accessToken, {
         httpOnly: true,
@@ -120,16 +167,13 @@ router.get('/google/callback', (req, res, next) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
-    const frontendOrigin = 'https://ominous-goggles-g5wrvrxwxx63vxgr-5173.app.github.dev/';
+    const frontendOrigin = 'https://ominous-goggles-g5wrvrxwxx63vxgr-5173.app.github.dev';
     res.send(`
     <html>
         <head><title>Logging in...</title></head>
         <body>
         <script>
-            window.opener.postMessage({
-            accessToken: "${accessToken}",
-            refreshToken: "${refreshToken}"
-            }, "${frontendOrigin}");
+            window.opener.postMessage({ success: true }, "${frontendOrigin}");
             window.close();
         </script>
         <p>Logging in...</p>

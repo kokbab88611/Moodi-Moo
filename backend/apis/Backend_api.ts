@@ -1,24 +1,23 @@
 import express from 'express';
 import pool from '../../database/db';
-import { promises } from 'dns';
+import {requireAuth} from '../authenticate/auth'
 
 const router = express.Router();
 
 interface Mood{
     mood: string;
-    moodRate: number;
+    hashtags: [];
     note?: string;
 }
 
 router.post('/update', async (req, res): Promise<any> =>{
-    const {mood, moodRate, note=""}: Mood = req.body;
+    const {mood, hashtags, note=""}: Mood = req.body;
   if(!mood) {
     return res.status(400).json({error: 'Mood is required'});
   }
-
   try{
-    const result = await pool.query('INSERT INTO mood_log (mood, mood_rate, note) VALUES ($1, $2, $3) RETURNING id',
-      [mood, moodRate, note]
+    const result = await pool.query('INSERT INTO mood_log (mood, hashtags, note) VALUES ($1, $2, $3) RETURNING id',
+      [mood, hashtags, note]
     );
   } catch (error) {
     console.error('DB insert has failed: ', error);
@@ -45,7 +44,7 @@ router.get('/mood', async (req, res): Promise<any> => {
 
 router.put('/mood/:log_id', async (req, res): Promise<any> => {
   const log_id = req.params.log_id;
-  const {mood, mood_rate, note, user_id } = req.body;
+  const {mood, hashtags, note, user_id } = req.body;
   
   let query = 'UPDATE mood_log SET';
   let updates = [];
@@ -67,9 +66,9 @@ router.put('/mood/:log_id', async (req, res): Promise<any> => {
       updates.push(`mood = $${i++}`);
       values.push(mood);
     }
-    if (mood_rate !== undefined) {
-      updates.push(`mood_rate = $${i++}`);
-      values.push(mood_rate);
+    if (hashtags !== undefined) {
+      updates.push(`hashtags = $${i++}`);
+      values.push(hashtags);
     }
     if (note !== undefined) {
       updates.push(`note = $${i++}`);
