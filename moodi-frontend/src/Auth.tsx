@@ -1,9 +1,5 @@
 import React, {createContext, useEffect, useState} from "react";
-type User = {
-    email: string;
-    name: string;
-    profileImg: string;
-}
+import type { User } from './types';
 
 const AuthContext = createContext<{
     user: User | null;

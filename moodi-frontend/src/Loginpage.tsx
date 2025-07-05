@@ -2,9 +2,12 @@ import './Loginpage.css';
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import type { User } from './types';
+import { useUser } from './UseUser';
 
 function Loginpage() {
     const navigate = useNavigate();
+    const {user, setUser} = useUser();
 
     const handleRedirect = () => {
         
@@ -24,7 +27,9 @@ function Loginpage() {
                         console.log('errorrR')
                         return;
                     }
+                    console.log('this is what I want',user)
                     handleRedirect();
+                    setUser(user);
                 })
                 .catch(error => {
                     console.error('Error fetching user data:', error)

@@ -1,34 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import './Me.css'; 
-interface User{
-    id: string;
-    email: string;
-    name: string;
-    profilePicture: string;
-}
+import type { User } from './types';
+import { useUser } from './UseUser';
 
 function Me() {
-
-    const handleMessage = (event: MessageEvent) => {
-            if (event.origin !== "https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev") {
-            return;
-            }  
-            axios.get('/auth/me', {withCredentials: true})
-            .then(response => {
-                const user = response.data;
-                if(!user){
-                    console.log('errorrR')
-                    return;
-                }
-                handleRedirect();
-            })
-            .catch(error => {
-                console.error('Error fetching user data:', error)
-            })
-        
-
-    
-
+    const {user, setUser} = useUser();
     const handleToggleSidebar = () => {
         const sidebar = document.getElementById('sidebar');
         const toggleIcon = document.getElementById('toggleIcon');
@@ -49,7 +25,7 @@ function Me() {
                 <div className='header-row'>
                     <h1 className='dashboard-title'>How Are You Feeling Today?</h1>
                     <div className='user-info'>
-                        <span className="user-name">Welcome back, {user?.name}</span>
+                        <span className="user-name">Welcome back, {user?.name || 'null'}</span>
                         <div className='user-avatar'>a</div>
                     </div>
                 </div>
