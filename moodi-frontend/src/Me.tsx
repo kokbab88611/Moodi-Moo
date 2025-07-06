@@ -1,10 +1,20 @@
 import React, {useState, useEffect} from 'react';
 import './Me.css'; 
-import type { User } from './types';
+// import type { User } from './types';
 import { useUser } from './UseUser';
+import { useNavigate } from 'react-router-dom';
 
 function Me() {
     const {user, setUser} = useUser();
+    // const {checkAuth, setCheckAuth} = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() =>{
+        if(user === null){
+            navigate('/')
+        }
+    }, [user, navigate])
+    
     const handleToggleSidebar = () => {
         const sidebar = document.getElementById('sidebar');
         const toggleIcon = document.getElementById('toggleIcon');
@@ -25,7 +35,7 @@ function Me() {
                 <div className='header-row'>
                     <h1 className='dashboard-title'>How Are You Feeling Today?</h1>
                     <div className='user-info'>
-                        <span className="user-name">Welcome back, {user?.name || 'null'}</span>
+                        <span className="user-name">Welcome back, {user?.user_name || 'null'}</span>
                         <div className='user-avatar'>a</div>
                     </div>
                 </div>

@@ -15,17 +15,16 @@ Indexes:
     Column     |            Type             | Collation | Nullable |                Default                 
 ---------------+-----------------------------+-----------+----------+----------------------------------------
  user_id       | integer                     |           | not null | nextval('users_user_id_seq'::regclass)
- username      | character varying(20)       |           | not null | 
+ user_name     | character varying(20)       |           | not null | 
  password_hash | character varying(255)      |           |          | 
  email         | character varying(100)      |           |          | 
  joined_at     | timestamp without time zone |           |          | CURRENT_TIMESTAMP
  auth_provider | character varying(20)       |           |          | 'local'::character varying
 Indexes:
     "users_pkey" PRIMARY KEY, btree (user_id)
-    "users_email_key" UNIQUE CONSTRAINT, btree (email)
-    "users_username_key" UNIQUE CONSTRAINT, btree (username)
+    "unique_email" UNIQUE CONSTRAINT, btree (email)
 
-    
 //docker exec -it database-db-1 psql -U user -d moodidb
+
 
 

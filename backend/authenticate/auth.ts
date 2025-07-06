@@ -6,6 +6,7 @@ import pool from '../../database/db';
 import passport from 'passport';
 import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
 import dotenv from 'dotenv';
+import type {User} from '../../types'
 import { JwtPayload } from 'jsonwebtoken';
 
 export interface AuthenticatedRequest extends Request {
@@ -19,34 +20,33 @@ passport.use(new GoogleStrategy({
     clientID: process.env.CLIENTID as string,
     clientSecret: process.env.CLIENTSECRET as string,
     callbackURL: 'https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev/auth/google/callback',
-},
-async function(accessToken: any, refreshToken: any, profile: any, cb: any) {
-    try {
-        const email = profile.emails?.[0]?.value;
-        if(!email) return cb(new Error('no email provided'), false);
-        const User = await findOrCreateUserGoogle(profile);
-        console.log(User)
-        if(User){
-            return cb(null, User)
-        } else {
-            return cb(null, false)
+    },
+    async function(accessToken: any, refreshToken: any, profile: any, cb: any) {
+        try {
+            const email = profile.emails?.[0]?.value;
+            if(!email) return cb(new Error('no email provided'), false);
+            const User = await findOrCreateUserGoogle(profile);
+            console.log(User)
+            if(User){
+                return cb(null, User)
+            } else {
+                return cb(null, false)
+            }
+        } catch(err){
+            return cb(err, false)
         }
-    } catch(err){
-        return cb(err, false)
     }
-}
 ))
 
 router.get('/me', requireAuth ,async (req:AuthenticatedRequest, res) => {
     try{
-        const user_id = req.user?.user_id;
         const user_email = req.user?.email;
         if(!user_email){
             res.status(404).json({error: 'Token not valid (email not included)'})
         }
         
         const result = await pool.query(
-        'SELECT user_id, username, email, joined_at, auth_provider FROM users WHERE email = $1',
+        'SELECT user_id, user_name, email, joined_at, auth_provider FROM users WHERE email = $1',
         [user_email]
         );
 
@@ -55,7 +55,13 @@ router.get('/me', requireAuth ,async (req:AuthenticatedRequest, res) => {
             return;
         }
         const user = result.rows[0];
-        res.json({user});
+        const userinfo: User = {
+            user_id: user.user_id,
+            user_name: user.user_name,
+            email: user.email,
+            joined_at: user.joined_at,
+        }
+        res.json(userinfo);
     } catch(err) {
         console.error('Error fetching user data', err);
         res.status(500).json({error: 'Internal server error'})
@@ -79,8 +85,8 @@ export function requireAuth (req: Request, res: Response, next: NextFunction):vo
 }
 
 router.post('/register', async (req: Request, res: Response): Promise<any> => {
-    const {email, password, username} = req.body;
-    if (!email || !password || !username){
+    const {email, password, user_name} = req.body;
+    if (!email || !password || !user_name){
         return res.status(400).json({error: 'Missing fields'});
     }
     try {
@@ -93,8 +99,8 @@ router.post('/register', async (req: Request, res: Response): Promise<any> => {
         }
         const hashed = await bcrypt.hash(password, 10)
         await pool.query(
-            'INSERT INTO users (email, password_hash, username) VALUES ($1, $2, $3)',
-            [email, hashed, username]
+            'INSERT INTO users (email, password_hash, user_name) VALUES ($1, $2, $3)',
+            [email, hashed, user_name]
         ) 
         return res.status(201).json({ msg: 'User registered successfully' });
     } catch (err) {
@@ -150,8 +156,8 @@ router.get('/google/callback', (req, res, next) => {
     }
     // You can generate JWT here and respond accordingly
 
-    const accessToken = generateAccessToken(user.username, user.email, 'user');
-    const refreshToken = generateRefreshToken(user.username, user.email);
+    const accessToken = generateAccessToken(user.user_id, user.user_name, user.email, 'user');
+    const refreshToken = generateRefreshToken(user.user_id, user.user_name, user.email, 'user');
 
     res.cookie('accessToken', accessToken, {
         httpOnly: true,
@@ -183,13 +189,6 @@ router.get('/google/callback', (req, res, next) => {
 
   })(req, res, next);
 });
-  
-// router.get( '/google/callback',
-//     passport.authenticate( 'google', {
-//         successRedirect: '/google/success',
-//         failureRedirect: '/google/failure'
-// }));
-
 
 router.post('/refresh', async (req: Request, res: Response): Promise<any> => {
     const token = req.cookies.refreshToken;
@@ -197,8 +196,8 @@ router.post('/refresh', async (req: Request, res: Response): Promise<any> => {
         return res.sendStatus(401);
     }
     try{
-        const decoded = verifyToken(token) as { user_id: string, email: string };
-        const newAccessToken = generateAccessToken(decoded.user_id, decoded.email);
+        const decoded = verifyToken(token) as { user_id: string, user_name: string,  email: string };
+        const newAccessToken = generateAccessToken(decoded.user_id, decoded.user_name, decoded.email);
 
         res.cookie('accessToken', newAccessToken, {
             httpOnly: true,

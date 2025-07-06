@@ -19,23 +19,23 @@ export async function findUserByEmail(email: string) {
 
 export async function findOrCreateUserGoogle(profile: any) {
     const userData = {
-        google_id: profile.id,
-        username: profile.displayName || '',
+        google_id: profile.id, //not used but why not? could be used in future for user verification (UNIQUE value)
+        user_name: profile.displayName || '',
         email: profile.emails?.[0]?.value || '',
         auth_provider: 'google',
     };
-    const findUser = await pool.query('SELECT * FROM users WHERE email = $1', 
+    const findUser = await pool.query('SELECT * FROM users WHERE email = $1',
         [userData.email]
-    );
-    if(findUser.rows.length > 0) {
+    ); 
+    if(findUser.rows.length > 0) { //if user exist return the user information
         return findUser.rows[0];
     }
 
     const insertUser = await pool.query(
-        `INSERT INTO users (username, email, auth_provider)
+        `INSERT INTO users (user_name, email, auth_provider)
         VALUES ($1, $2, $3) 
         RETURNING *`,
-        [userData.username, userData.email, userData.auth_provider]
+        [userData.user_name, userData.email, userData.auth_provider]
     );
     return userData;
 }

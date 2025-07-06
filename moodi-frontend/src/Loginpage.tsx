@@ -2,15 +2,14 @@ import './Loginpage.css';
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import type { User } from './types';
+import type { User } from '../../types';
 import { useUser } from './UseUser';
 
 function Loginpage() {
     const navigate = useNavigate();
-    const {user, setUser} = useUser();
+    const {setUser} = useUser();
 
     const handleRedirect = () => {
-        
         navigate('/me');
     }
 
@@ -20,16 +19,16 @@ function Loginpage() {
             return;
             }  
             if (event.data.success) {
-                axios.get('/auth/me', {withCredentials: true})
+                axios.get('https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev/auth/me', {withCredentials: true})
                 .then(response => {
-                    const user = response.data;
+                    const user = response.data as User;
                     if(!user){
-                        console.log('errorrR')
+                        console.log('Rrror: no user found or created ')
                         return;
                     }
-                    console.log('this is what I want',user)
-                    handleRedirect();
+                    console.log(user)
                     setUser(user);
+                    handleRedirect();
                 })
                 .catch(error => {
                     console.error('Error fetching user data:', error)

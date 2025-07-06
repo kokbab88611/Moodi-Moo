@@ -6,23 +6,24 @@ dotenv.config();
 const JwtSecret = process.env.JWT_SECRET as string;
 
 export interface JwtPayload {
-    user_id: string;
+    user_id: string
+    user_name: string;
     email: string;
     role: string;
 }
 
-export function generateAccessToken(user_id: string, email: string, role: string = 'user'): string {
+export function generateAccessToken(user_id: string, user_name: string, email: string, role: string = 'user'): string {
     const token = jwt.sign( 
-        { user_id, email, role},
+        { user_id, user_name, email, role},
         JwtSecret, 
         { algorithm: 'HS256', expiresIn: "15m" }
     );
     return token
 }
 
-export function generateRefreshToken(user_id: string, email: string): string {
+export function generateRefreshToken(user_id: string, user_name: string, email: string, role: string): string {
     const token = jwt.sign( 
-        { user_id, email},
+        { user_id, user_name, email, role},
         JwtSecret, 
         { algorithm: 'HS256', expiresIn: "7d" }
     );
