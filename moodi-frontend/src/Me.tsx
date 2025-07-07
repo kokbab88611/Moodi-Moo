@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, { useEffect } from 'react';
 import './Me.css'; 
 // import type { User } from './types';
 import { useUser } from './UseUser';
 import { useNavigate } from 'react-router-dom';
 
 function Me() {
-    const {user, setUser} = useUser();
+    const {user} = useUser();
     // const {checkAuth, setCheckAuth} = useState(true);
     const navigate = useNavigate();
 

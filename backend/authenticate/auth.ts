@@ -60,6 +60,8 @@ router.get('/me', requireAuth ,async (req:AuthenticatedRequest, res) => {
             user_name: user.user_name,
             email: user.email,
             joined_at: user.joined_at,
+            role: user.role ?? undefined,
+            profileImage: user.profile_image ?? undefined, 
         }
         res.json(userinfo);
     } catch(err) {
