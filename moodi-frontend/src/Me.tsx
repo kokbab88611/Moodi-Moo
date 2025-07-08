@@ -1,11 +1,32 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Me.css'; 
 // import type { User } from './types';
 import { useUser } from './UseUser';
 
 function Me() {
     const {user} = useUser();
-    
+    let chosenMoodName = null;
+    const [tags, setTags] = useState<string[]>([]);
+
+    const removeTag = (tagToRemove) => {
+        setTags(prev => prev.filter(tag => tag !== tagToRemove));
+    }
+
+    const handleSelectMood = (e: React.MouseEvent<HTMLDivElement>) => {
+        const chosenMood = e.currentTarget;
+        if(chosenMood.classList.contains('selected')){
+            chosenMood.classList.remove('selected')
+            console.log('selection cancelled')
+        } else{
+            document.querySelectorAll('.mood-item').forEach(mood => {
+                mood.classList.remove('selected');
+            })
+            chosenMood.classList.add('selected');
+            chosenMoodName = chosenMood.querySelector('.mood-name')?.textContent;
+            console.log(chosenMoodName);
+        }
+    }
+
     const handleToggleSidebar = () => {
         const sidebar = document.getElementById('sidebar');
         const toggleIcon = document.getElementById('toggleIcon');
@@ -36,7 +57,10 @@ function Me() {
         <div className='content-wrapper'>
             <div className='sidebar' id='sidebar'>
                 <div className='sidebar-item-back' onClick={handleToggleSidebar} id="toggleIcon">←</div>
-
+                <div className='sidebar-item'>
+                    <div className='sidebar-icon'>🏠</div>
+                    <div className='sidebar-text'>Dashboard</div>
+                </div>
                 <div className='sidebar-item'>
                     <div className='sidebar-icon'>📚</div>
                     <div className='sidebar-text'>Log</div>
@@ -65,27 +89,27 @@ function Me() {
                     <div className='card mood-tracker'>
                         <h3>Select Your Mood</h3>
                         <div className='mood-grid'>
-                            <div className='mood-item'>
+                            <div className='mood-item' onClick={handleSelectMood}>
                                 <div className='mood-emoji'>😄</div>
                                 <div className='mood-name'>Happy</div>
                             </div>
-                            <div className='mood-item'>
+                            <div className='mood-item' onClick={handleSelectMood}>
                                 <div className='mood-emoji'>😲</div>
                                 <div className='mood-name'>Surprise</div>
                             </div>
-                            <div className='mood-item'>
+                            <div className='mood-item' onClick={handleSelectMood}>
                                 <div className='mood-emoji'>😡</div>
                                 <div className='mood-name'>Angry</div>
                             </div>
-                            <div className='mood-item'>
+                            <div className='mood-item' onClick={handleSelectMood}>
                                 <div className='mood-emoji'>😥</div>
                                 <div className='mood-name'>Sad</div>
                             </div>
-                            <div className='mood-item'>
+                            <div className='mood-item' onClick={handleSelectMood}>
                                 <div className='mood-emoji'>😨</div>
                                 <div className='mood-name'>Anxious</div>
                             </div>
-                            <div className='mood-item'>
+                            <div className='mood-item' onClick={handleSelectMood}>
                                 <div className='mood-emoji'>😖</div>
                                 <div className='mood-name'>Disgusted</div>
                             </div>
@@ -95,7 +119,13 @@ function Me() {
                         <div className='tags-section'>
                             <h3>Add Tags</h3>
                             <div className='tags-input' id='tagsInput'>
-                                <input type='text' className='tag-input' placeholder='Type a tag...' id='tagInputField' />
+                                {tags.map(tag => (
+                                    <span className='tag' key={tag}>
+                                        {tag}
+                                        <span className='tag-remove' onClick={() => removeTag(tag)}>x</span>
+                                    </span>
+                                ))}
+                                <input type='text' className='tag-input' placeholder='Type a tag...' id='tagInputField' onKeyDown={handletag}/>
                             </div>
                             <h3>Suggested Tags</h3>
                             <div className='suggested-tags'>
