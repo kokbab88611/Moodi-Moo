@@ -2,18 +2,9 @@ import React, { useEffect } from 'react';
 import './Me.css'; 
 // import type { User } from './types';
 import { useUser } from './UseUser';
-import { useNavigate } from 'react-router-dom';
 
 function Me() {
     const {user} = useUser();
-    // const {checkAuth, setCheckAuth} = useState(true);
-    const navigate = useNavigate();
-
-    useEffect(() =>{
-        if(user === null){
-            navigate('/')
-        }
-    }, [user, navigate])
     
     const handleToggleSidebar = () => {
         const sidebar = document.getElementById('sidebar');
