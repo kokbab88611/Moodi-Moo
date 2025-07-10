@@ -1,23 +1,18 @@
 import express from 'express';
 import pool from '../../database/db';
 import {requireAuth} from '../authenticate/auth'
+import type { MoodSave } from '../../types';
 
 const router = express.Router();
 
-interface Mood{
-    mood: string;
-    hashtags: [];
-    note?: string;
-}
-
-router.post('/update', async (req, res): Promise<any> =>{
-    const {mood, hashtags, note=""}: Mood = req.body;
+router.post('/addmood', async (req, res): Promise<any> =>{
+    const {user_id, mood, hashtags, note=""}: MoodSave = req.body;
   if(!mood) {
     return res.status(400).json({error: 'Mood is required'});
   }
   try{
-    const result = await pool.query('INSERT INTO mood_log (mood, hashtags, note) VALUES ($1, $2, $3) RETURNING id',
-      [mood, hashtags, note]
+    const result = await pool.query('INSERT INTO mood_log (user_id, mood, hashtags, note) VALUES ($1, $2, $3, $4) RETURNING id',
+      [user_id, mood, hashtags, note]
     );
   } catch (error) {
     console.error('DB insert has failed: ', error);

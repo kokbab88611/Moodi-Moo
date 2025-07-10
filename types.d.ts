@@ -6,3 +6,10 @@ export interface User {
   profileImage?: string;
   role?: string;
 }
+
+export interface MoodSave {
+  user_id: string;
+  mood: string;
+  note: string;
+  hashtags: string[];
+}

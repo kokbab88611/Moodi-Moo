@@ -2,16 +2,46 @@ import React, { useEffect, useState } from 'react';
 import './Me.css'; 
 // import type { User } from './types';
 import { useUser } from './UseUser';
+import type { MoodSave } from '../../types';
+import axios from 'axios';
 
 function Me() {
     const {user} = useUser();
-    let chosenMoodName = null;
+    const [chosenMood, setChosenMood] = useState<string | undefined>();
     const [tags, setTags] = useState<string[]>([]);
+    const [log, setLog] = useState<string | undefined>()
 
-    const removeTag = (tagToRemove) => {
+    const handleSave = () => {
+        const moodinput: MoodSave = {
+            user_id: user?.user_id ?? '',
+            mood: chosenMood ?? '',
+            hashtags: tags ?? [], 
+            note: log ?? '',
+        };
+
+        axios.post('https://ominous-goggles-g5wrvrxwxx63vxgr-3000.app.github.dev/addmood', moodinput)
+            .then(() => console.log('Saved!'))
+            .catch(err => console.error('Failed to save mood:', err));
+    }
+
+    const removeTag = (tagToRemove: string) => {
         setTags(prev => prev.filter(tag => tag !== tagToRemove));
     }
 
+    const handletag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const newtag = e.currentTarget.value;
+        if(e.key === 'Enter' && newtag.trim() !== '') {
+            setTags(prev => [...prev, newtag]);
+            e.currentTarget.value = '';
+        }
+    }
+
+    const selectSuggestedTag = (e: React.MouseEvent<HTMLSpanElement>) => {
+        const tag = e.currentTarget.textContent;
+        if(!tag) return;
+        setTags(prev => [...prev, tag]);
+    }
+    
     const handleSelectMood = (e: React.MouseEvent<HTMLDivElement>) => {
         const chosenMood = e.currentTarget;
         if(chosenMood.classList.contains('selected')){
@@ -22,8 +52,10 @@ function Me() {
                 mood.classList.remove('selected');
             })
             chosenMood.classList.add('selected');
-            chosenMoodName = chosenMood.querySelector('.mood-name')?.textContent;
-            console.log(chosenMoodName);
+            const moodNameElement = chosenMood.querySelector('.mood-name');
+            const moodName = moodNameElement?.textContent?.trim();
+            setChosenMood(moodName);
+            console.log(moodName)
         }
     }
 
@@ -120,36 +152,36 @@ function Me() {
                             <h3>Add Tags</h3>
                             <div className='tags-input' id='tagsInput'>
                                 {tags.map(tag => (
-                                    <span className='tag' key={tag}>
+                                    <span className='tag' key={tag} onClick={() => removeTag(tag)}>
                                         {tag}
-                                        <span className='tag-remove' onClick={() => removeTag(tag)}>x</span>
                                     </span>
                                 ))}
-                                <input type='text' className='tag-input' placeholder='Type a tag...' id='tagInputField' onKeyDown={handletag}/>
+                                <input type='text' className='tag-input' placeholder='Type a tag...' id='tagInputField' onKeyDown={(e) => handletag(e)}/>
                             </div>
                             <h3>Suggested Tags</h3>
                             <div className='suggested-tags'>
-                                <span className="suggested-tag">#work</span>
-                                <span className="suggested-tag">#family</span>
-                                <span className="suggested-tag">#exercise</span>
-                                <span className="suggested-tag">#friends</span>
-                                <span className="suggested-tag">#sleep</span>
-                                <span className="suggested-tag">#stress</span>
-                                <span className="suggested-tag">#creative</span>
-                                <span className="suggested-tag">#music</span>
-                                <span className="suggested-tag">#food</span>
-                                <span className="suggested-tag">#travel</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>work</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>family</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>exercise</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>friends</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>sleep</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>stress</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>creative</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>music</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>food</span>
+                                <span className="suggested-tag" onClick={(e) => selectSuggestedTag(e)}>travel</span>
                             </div>
                         </div>
                         <div className='journal-entry'>
                             <h3>This space is Yours (optional)</h3>
                             <textarea 
-                            placeholder='Write your thoughts here...'/>
+                            placeholder='Write your thoughts here...'
+                            onChange={(e) => setLog(e.target.value)}/>
                         </div>
                         
                     </div>
                     <div className='column'>
-                        <div className='save-button'>
+                        <div className='save-button' onClick={handleSave}>
                             Remember
                         </div>
                         <div className='card'>
